@@ -2,6 +2,7 @@ import requests
 import json
 import time
 from os import path
+import math
 
 
 sfile = '../secrets/secrets.json'
@@ -16,8 +17,8 @@ min_lat = 48
 max_lat = 49
 min_lon = 2
 max_lon = 3
-lat_delta = .3
-lon_delta = .3
+lat_delta = .1
+lon_delta = .1
 
 
 class flickr_getter(object):
@@ -37,15 +38,15 @@ class flickr_getter(object):
 
     def make_full_request(self, lat, lon, radius, tags):
         print('Getting first page.')
-        res = self.make_request(lat, lon, radius, tags, self.secret)
+        res = self.make_request(lat, lon, radius, tags)
         photos = res.get('photos', {}).get('photo')
         pages = res.get('photos', {}).get('pages')
         print('Pages: {}'.format(pages))
         for i in range(1, pages):
             print('Getting page {}'.format(i))
-            res = self.make_request(lat, lon, radius, tags, self.secret, page=i)
+            res = self.make_request(lat, lon, radius, tags, page=i)
             time.sleep(self.sleep_time)
-            photos.append(res.get('photos', {}).get('photo', []))
+            photos.extend(res.get('photos', {}).get('photo', []))
         return photos
 
     def make_request(self, lat, lon, radius, tags, page=None):
@@ -71,11 +72,13 @@ class flickr_getter(object):
 
 flickr = flickr_getter(sfile)
 
-for clat in range(min_lat, max_lat, lat_delta):
-    for clon in range(min_lon, max_lon, lon_delta):
-        vals = flickr.make_full_request(clat, clon, 30, 'invader')
-        with open(path.join(output_dir, output_fname()), 'w') as ofile:
-            for item in vals:
-                ofile.write('{}\n'.format(json.dumps(item)))
+for clat in [min_lat + (lat_delta * step) for step in range(0, math.ceil((max_lat - min_lat) / lat_delta))]:
+    for clon in [min_lon + (lon_delta * step) for step in range(0, math.ceil((max_lon - min_lon) / lon_delta))]:
+        print('working on {}, {}'.format(clat, clon))
+        vals = flickr.make_full_request(clat, clon, 20, 'invader')
+        if len(vals) > 0:
+            with open(path.join(output_dir, output_fname()), 'w') as ofile:
+                for item in vals:
+                    ofile.write('{}\n'.format(json.dumps(item)))
 
 # vals = flickr.make_full_request(48.86145, 2.32268, 2, 'invader')
