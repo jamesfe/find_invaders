@@ -49,7 +49,10 @@ def make_request(lat, lon, radius, tags, key, page=None):
 
 
 secret_key = get_secret()
-vals = make_full_request(48.86145, 2.32268, 2, 'invader', secret_key)
-with open('output.json', 'w') as ofile:
+vals = make_full_request(50.838679, 4.2933659, 10, 'invader', secret_key)  # brussels
+# vals = make_full_request(48.86145, 2.32268, 2, 'invader', secret_key)  # paris
+with open('brussels.csv', 'w') as ofile:
+    ofile.write('lat, lon, title\n')
     for item in vals:
-        ofile.write('{}\n'.format(json.dumps(item)))
+        ofile.write('{},{},{}\n'.format(item['latitude'], item['longitude'], item['title'].encode('utf8')))
+        # ofile.write('{}\n'.format(json.dumps(item)))
