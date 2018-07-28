@@ -23,7 +23,7 @@ def make_full_request(lat, lon, radius, tags, key):
         print('Getting page {}'.format(i))
         res = make_request(lat, lon, radius, tags, key, page=i)
         time.sleep(1)
-        photos.append(res.get('photos', {}).get('photo', []))
+        photos.extend(res.get('photos', {}).get('photo', []))
     return photos
 
 
