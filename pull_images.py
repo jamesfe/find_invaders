@@ -45,16 +45,36 @@ def make_request(lat, lon, radius, tags, key, page=None):
     text_val = None
     if res.status_code == 200:
         text_val = json.loads(res.text[14:-1])
+
     return text_val
+
+
+def make_link_from_photo_object(photo):
+    return 'http://farm{}.staticflickr.com/{}/{}_{}.jpg'.format(photo['farm'], photo['server'], photo['id'], photo['secret'])
+
+
+def dump_file(vals, city_name):
+    with open(city_name + '.csv', 'w') as ofile:
+        ofile.write('lat, lon, title, url\n')
+        for item in vals:
+            ofile.write('{},{},"{}",{}\n'.format(
+                item['latitude'],
+                item['longitude'],
+                item['title'].encode('utf8').decode('utf8'),
+                make_link_from_photo_object(item)))
+
+
+def collect_and_dump(lat, lon, radius, tags, key, city_name):
+    vals = make_full_request(lat, lon, radius, tags, key)
+    dump_file(vals, city_name)
 
 
 secret_key = get_secret()
 # vals = make_full_request(50.838679, 4.2933659, 10, 'invader', secret_key)  # brussels
 # vals = make_full_request(40.75206, -73.9925837, 20, 'invader', secret_key)  # nyc
 # vals = make_full_request(48.86145, 2.32268, 2, 'invader', secret_key)  # paris
-vals = make_full_request(51.510348, -0.1151311, 15, 'invader', secret_key)  # london
-
-with open('london.csv', 'w') as ofile:
-    ofile.write('lat, lon, title\n')
-    for item in vals:
-        ofile.write('{},{},{}\n'.format(item['latitude'], item['longitude'], item['title'].encode('utf8')))
+# collect_and_dump(lat=51.510348, lon=-0.1151311, radius=15, tags='invader', key=secret_key, city_name='london')
+collect_and_dump(lat=43.5273539, lon=5.4446223, radius=20, tags='invader', key=secret_key, city_name='aix_en_provence')
+collect_and_dump(lat=45.1827748, lon=5.7167003, radius=20, tags='invader', key=secret_key, city_name='grenoble')
+collect_and_dump(lat=45.75801, lon=4.8001016, radius=25, tags='invader', key=secret_key, city_name='lyon')
+collect_and_dump(lat=45.787119, lon=3.0777067, radius=15, tags='invader', key=secret_key, city_name='cleremont_ferrand')
