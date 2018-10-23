@@ -74,7 +74,18 @@ secret_key = get_secret()
 # vals = make_full_request(40.75206, -73.9925837, 20, 'invader', secret_key)  # nyc
 # vals = make_full_request(48.86145, 2.32268, 2, 'invader', secret_key)  # paris
 # collect_and_dump(lat=51.510348, lon=-0.1151311, radius=15, tags='invader', key=secret_key, city_name='london')
-collect_and_dump(lat=43.5273539, lon=5.4446223, radius=20, tags='invader', key=secret_key, city_name='aix_en_provence')
-collect_and_dump(lat=45.1827748, lon=5.7167003, radius=20, tags='invader', key=secret_key, city_name='grenoble')
-collect_and_dump(lat=45.75801, lon=4.8001016, radius=25, tags='invader', key=secret_key, city_name='lyon')
-collect_and_dump(lat=45.787119, lon=3.0777067, radius=15, tags='invader', key=secret_key, city_name='cleremont_ferrand')
+# Another dump
+# collect_and_dump(lat=43.5273539, lon=5.4446223, radius=20, tags='invader', key=secret_key, city_name='aix_en_provence')
+# collect_and_dump(lat=45.1827748, lon=5.7167003, radius=20, tags='invader', key=secret_key, city_name='grenoble')
+# collect_and_dump(lat=45.75801, lon=4.8001016, radius=25, tags='invader', key=secret_key, city_name='lyon')
+# collect_and_dump(lat=45.787119, lon=3.0777067, radius=15, tags='invader', key=secret_key, city_name='cleremont_ferrand')
+# Switzerland
+targets = """46.5197712,6.6313646,lausanne
+46.2036094,6.144109,geneva
+46.9480936,7.443561,bern
+47.0473566,8.304838,lucerne
+47.5563346,7.58714,basel
+47.5007866,9.732187,bregenz"""
+for item in targets.split('\n'):
+    args = item.split(',')
+    collect_and_dump(lat=float(args[0]), lon=float(args[1]), radius=30, tags='invader', key=secret_key, city_name=args[2])
